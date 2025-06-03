@@ -1,0 +1,579 @@
+@import "tailwindcss";
+@import 'reactflow/dist/style.css';
+
+/* Dark Theme Variables */
+:root {
+  --bg-color: rgb(17, 17, 17);
+  --text-color: rgb(243, 244, 246);
+  --node-border-radius: 10px;
+  --node-box-shadow: 10px 0 15px rgba(42, 138, 246, 0.3),
+    -10px 0 15px rgba(233, 42, 103, 0.3);
+}
+
+/* Global Dark Theme */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* ReactFlow Dark Theme */
+.react-flow {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Hide scrollbars globally while keeping scroll functionality */
+html, body {
+  overflow: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* ReactFlow specific scrollbar hiding */
+.react-flow {
+  overflow: hidden;
+}
+
+.react-flow__renderer {
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.react-flow__renderer::-webkit-scrollbar {
+  display: none;
+}
+
+/* ========================================== */
+/* FIXED TURBO NODE STYLING                  */
+/* ========================================== */
+
+/* TurboNode Styling - FIXED for variable handles */
+.turbo-node {
+  border-radius: var(--node-border-radius);
+  display: flex;
+  height: auto;
+  min-width: 140px;
+  max-width: 200px;
+  min-height: 80px !important; /* ADDED: Minimum height for handles */
+  font-family: 'system-ui', sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  box-shadow: var(--node-box-shadow);
+  position: relative;
+  background: transparent;
+  overflow: visible !important; /* FIXED: Allow handles to extend outside */
+}
+
+.turbo-node .wrapper {
+  overflow: visible !important; /* FIXED: Changed from hidden to visible */
+  display: flex;
+  padding: 2px;
+  position: relative;
+  border-radius: var(--node-border-radius);
+  flex-grow: 1;
+}
+
+/* Gradient Border Animation - FIXED to not affect node shape */
+.gradient:before {
+  content: '';
+  position: absolute;
+  inset: -2px; /* FIXED: Use inset instead of complex calculations */
+  background: conic-gradient(
+    from -160deg at 50% 50%,
+    #e92a67 0deg,
+    #a853ba 120deg,
+    #2a8af6 240deg,
+    #e92a67 360deg
+  );
+  border-radius: var(--node-border-radius); /* FIXED: Use node border radius, not 100% */
+  z-index: -1;
+  padding: 0; /* FIXED: Remove padding that was making it circular */
+}
+
+.turbo-node.selected .wrapper.gradient:before {
+  animation: spinner 4s linear infinite;
+  background: conic-gradient(
+    from -160deg at 50% 50%,
+    #e92a67 0deg,
+    #a853ba 120deg,
+    #2a8af6 240deg,
+    rgba(42, 138, 246, 0) 360deg
+  );
+  border-radius: var(--node-border-radius); /* FIXED: Keep rectangular */
+}
+
+@keyframes spinner {
+  100% {
+    transform: rotate(360deg); /* SIMPLIFIED: Just rotate, no translate */
+  }
+}
+
+.turbo-node .inner {
+  background: var(--bg-color);
+  padding: 8px 12px;
+  border-radius: var(--node-border-radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-grow: 1;
+  position: relative;
+  min-height: 50px;
+  overflow: visible !important; /* ADDED: Ensure handles aren't clipped */
+}
+
+.turbo-node .body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.turbo-node .title-section {
+  margin-bottom: 6px;
+}
+
+.turbo-node .title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1;
+}
+
+.turbo-node .fields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.turbo-node .field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.turbo-node .field-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgb(156, 163, 175);
+  line-height: 1;
+}
+
+.turbo-node .content-text {
+  font-size: 12px;
+  color: rgb(156, 163, 175);
+}
+
+/* Cloud Indicator */
+.turbo-node .cloud {
+  border-radius: 100%;
+  width: 24px;
+  height: 24px;
+  right: 0;
+  position: absolute;
+  top: 0;
+  transform: translate(50%, -50%);
+  display: flex;
+  transform-origin: center center;
+  padding: 2px;
+  overflow: hidden;
+  box-shadow: var(--node-box-shadow);
+  z-index: 10;
+}
+
+.turbo-node .cloud div {
+  background-color: var(--bg-color);
+  flex-grow: 1;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* ========================================== */
+/* FIXED HANDLE STYLING                      */
+/* ========================================== */
+
+/* Default Handles - FIXED opacity and functionality */
+.turbo-handle {
+  opacity: 1 !important; /* FIXED: Always visible instead of 0 */
+  background: #2a8af6;
+  border: 2px solid #1a1a1a;
+  width: 10px;
+  height: 10px;
+  pointer-events: all !important; /* ADDED: Ensure clickable */
+  z-index: 1000 !important; /* ADDED: High z-index */
+}
+
+.turbo-handle.source {
+  right: -5px;
+}
+
+.turbo-handle.target {
+  left: -5px;
+}
+
+.turbo-node:hover .turbo-handle {
+  opacity: 1; /* FIXED: Keep visible on hover */
+}
+
+/* ReactFlow Default Handles - Enhanced */
+.react-flow__handle {
+  opacity: 1 !important; /* Always visible for ReactFlow handles */
+  background: #2a8af6 !important;
+  border: 2px solid #ffffff !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  position: absolute !important;
+  z-index: 1000 !important; /* High z-index to ensure visibility */
+  pointer-events: all !important; /* Ensure clickable */
+  cursor: crosshair !important;
+}
+
+/* Custom Variable Handles - NEW */
+.custom-handle {
+  opacity: 1 !important;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: 2px solid #ffffff !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  position: absolute !important;
+  z-index: 1001 !important;
+  pointer-events: all !important;
+  cursor: crosshair !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+}
+
+/* Handle Hover States - Enhanced */
+.react-flow__handle:hover {
+  transform: scale(1.2) !important;
+  box-shadow: 0 0 0 3px rgba(42, 138, 246, 0.3) !important;
+}
+
+.custom-handle:hover {
+  transform: scale(1.2) !important;
+  background: linear-gradient(135deg, #34d399, #10b981) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* Handle Positioning Improvements */
+.react-flow__handle.react-flow__handle-left {
+  left: -6px !important;
+}
+
+.react-flow__handle.react-flow__handle-right {
+  right: -6px !important;
+}
+
+/* ========================================== */
+/* ENHANCED TEXTAREA STYLES                  */
+/* ========================================== */
+
+/* Enhanced Textarea for Auto-Resize TextNode */
+.enhanced-textarea {
+  width: 100% !important;
+  min-height: 32px !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  resize: none !important;
+  border: 1px solid rgb(75, 85, 99) !important;
+  background-color: rgb(31, 41, 55) !important;
+  color: rgb(243, 244, 246) !important;
+  border-radius: 6px !important;
+  padding: 8px !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+  transition: height 0.2s ease-in-out !important;
+}
+
+.enhanced-textarea:focus {
+  outline: none !important;
+  border-color: rgb(59, 130, 246) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+.enhanced-textarea::placeholder {
+  color: rgb(156, 163, 175) !important;
+}
+
+/* Hide scrollbars completely */
+.enhanced-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.enhanced-textarea {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Better Auto-Resize Textarea */
+.simple-auto-textarea {
+  width: 140px !important;        /* FIXED width - no horizontal growth */
+  min-height: 40px !important;
+  max-height: 200px !important;   /* Max height to prevent huge nodes */
+  overflow: hidden !important;
+  resize: none !important;
+  border: 1px solid rgb(75, 85, 99) !important;
+  background-color: rgb(31, 41, 55) !important;
+  color: rgb(243, 244, 246) !important;
+  border-radius: 6px !important;
+  padding: 6px 8px !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+  font-family: inherit !important;
+  word-wrap: break-word !important;     /* Force text wrapping */
+  white-space: pre-wrap !important;     /* Preserve line breaks */
+  box-sizing: border-box !important;    /* Include padding in width */
+}
+
+.simple-auto-textarea:focus {
+  outline: none !important;
+  border-color: rgb(59, 130, 246) !important;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3) !important;
+}
+
+.simple-auto-textarea::placeholder {
+  color: rgb(156, 163, 175) !important;
+}
+
+/* Hide scrollbars completely */
+.simple-auto-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.simple-auto-textarea {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ========================================== */
+/* VARIABLE DISPLAY AND INDICATORS           */
+/* ========================================== */
+
+/* Fix Variable Display */
+.variables-indicator {
+  margin-top: 2px;
+  padding: 4px 6px !important;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  width: 140px !important;              /* Fixed width to match textarea */
+  box-sizing: border-box !important;
+}
+
+.variables-indicator span {
+  display: block !important;            /* Make span block level */
+  word-wrap: break-word !important;     /* Break long variable names */
+  white-space: pre-wrap !important;     /* Allow wrapping */
+  line-height: 1.3 !important;
+  max-width: 100% !important;
+}
+
+/* Variable handles styling - Legacy support */
+.variable-handle {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: 2px solid #065f46 !important;
+  width: 8px !important;
+  height: 8px !important;
+  opacity: 0.8 !important;
+}
+
+.variable-handle:hover {
+  background: linear-gradient(135deg, #34d399, #10b981) !important;
+  transform: scale(1.2);
+  opacity: 1 !important;
+}
+
+/* Variable handles always visible for TextNode */
+.turbo-node .variable-handle {
+  opacity: 0.8 !important;
+}
+
+.turbo-node:hover .variable-handle {
+  opacity: 1 !important;
+}
+
+/* ========================================== */
+/* ANIMATION AND TRANSITIONS                 */
+/* ========================================== */
+
+/* Dynamic height transition for TextNode */
+.turbo-node {
+  transition: height 0.3s ease-in-out;
+}
+
+.turbo-node .wrapper {
+  transition: height 0.3s ease-in-out;
+}
+
+.turbo-node .inner {
+  transition: min-height 0.3s ease-in-out;
+}
+
+/* Enhanced text node title section */
+.turbo-node .title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* ========================================== */
+/* CUSTOM EDGES STYLING                      */
+/* ========================================== */
+
+/* Custom Edges */
+.react-flow__edge .react-flow__edge-path {
+  stroke: url(#edge-gradient);
+  stroke-width: 2;
+  stroke-opacity: 0.75;
+}
+
+/* ========================================== */
+/* UI COMPONENT DARK THEMES                  */
+/* ========================================== */
+
+/* Toolbar Dark Theme */
+.pipeline-toolbar {
+  background-color: var(--bg-color);
+  border-bottom: 1px solid rgb(55, 65, 81);
+  padding: 16px;
+}
+
+/* Submit Button Dark Theme */
+.submit-container {
+  background-color: var(--bg-color);
+  padding: 16px;
+  border-top: 1px solid rgb(55, 65, 81);
+}
+
+/* ReactFlow Controls Dark Theme */
+.react-flow__controls button {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid #95679e;
+  border-bottom: none;
+}
+
+.react-flow__controls button:hover {
+  background-color: rgb(37, 37, 37);
+}
+
+.react-flow__controls button:first-child {
+  border-radius: 5px 5px 0 0;
+}
+
+.react-flow__controls button:last-child {
+  border-bottom: 1px solid #95679e;
+  border-radius: 0 0 5px 5px;
+}
+
+.react-flow__controls button path {
+  fill: var(--text-color);
+}
+
+/* MiniMap Dark Theme */
+.react-flow__minimap {
+  background-color: rgb(31, 41, 55);
+  border: 1px solid rgb(55, 65, 81);
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(17, 17, 17, 0.8);
+}
+
+.react-flow__minimap-node {
+  fill: rgb(75, 85, 99);
+  stroke: rgb(156, 163, 175);
+}
+
+/* Background */
+.react-flow__background {
+  background-color: var(--bg-color);
+}
+
+/* Attribution */
+.react-flow__attribution {
+  background: rgba(200, 200, 200, 0.2);
+}
+
+.react-flow__attribution a {
+  color: #95679e;
+}
+
+/* ========================================== */
+/* DELETE BUTTON STYLING                     */
+/* ========================================== */
+
+/* TurboFlow Delete Button */
+.turbo-delete-btn {
+  background: linear-gradient(135deg, #e92a67, #a853ba, #2a8af6);
+  box-shadow: 0 2px 8px rgba(233, 42, 103, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.turbo-delete-btn:hover {
+  background: linear-gradient(135deg, #ff3574, #b865c7, #3b94ff);
+  box-shadow: 0 4px 12px rgba(233, 42, 103, 0.6);
+  transform: scale(1.05);
+}
+
+.turbo-node:hover .turbo-delete-btn {
+  opacity: 1;
+}
+
+.turbo-node .group-hover\:opacity-100 {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.turbo-node:hover .group-hover\:opacity-100 {
+  opacity: 1 !important;
+}
+
+/* ========================================== */
+/* FOCUS AND INTERACTION STYLES              */
+/* ========================================== */
+
+/* Focus styles */
+.react-flow__node:focus,
+.react-flow__node:focus-visible {
+  outline: none;
+}
+
+/* Draggable nodes styling */
+.draggable-node {
+  background-color: rgb(31, 41, 55);
+  color: var(--text-color);
+  border: 1px solid rgb(75, 85, 99);
+}
+
+.draggable-node:hover {
+  background-color: rgb(55, 65, 81);
+}
+
+/* ========================================== */
+/* RESPONSIVE DESIGN                         */
+/* ========================================== */
+
+/* Responsive handle positioning */
+@media (max-width: 768px) {
+  .variable-handle {
+    width: 10px !important;
+    height: 10px !important;
+    left: -6px !important;
+  }
+  
+  .custom-handle {
+    width: 10px !important;
+    height: 10px !important;
+    left: -6px !important;
+  }
+}
