@@ -42,7 +42,7 @@ export const SubmitButton = () => {
       const payload = transformFlowData(nodes, edges);
 
       const response = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/pipelines/parse}`,
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/pipelines/parse`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
